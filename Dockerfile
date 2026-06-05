@@ -1,5 +1,14 @@
-FROM ubuntu:26.04
+FROM python:3.14
 
-RUN apt-get update && apt-get install -y curl wget
+WORKDIR /usr/local/app
 
-CMD ["curl","--version"]
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY src ./src
+EXPOSE 8080
+
+RUN useradd app
+USER app
+
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]
